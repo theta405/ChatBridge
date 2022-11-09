@@ -113,19 +113,19 @@ def on_user_info(server: PluginServerInterface, info: Info):
 
 
 def on_player_joined(server: PluginServerInterface, player_name: str, info: Info):
-	send_chat('{} joined {}'.format(player_name, config.name))
+	send_chat('{} 加入了 {}'.format(player_name, config.name))
 
 
 def on_player_left(server: PluginServerInterface, player_name: str):
-	send_chat('{} left {}'.format(player_name, config.name))
+	send_chat('{} 离开了 {}'.format(player_name, config.name))
 
 
 def on_server_startup(server: PluginServerInterface):
-	send_chat('Server has started up')
+	send_chat('服务器已启动')
 
 
 def on_server_stop(server: PluginServerInterface, return_code: int):
-	send_chat('Server stopped')
+	send_chat('服务器已停止')
 
 
 @event_listener('more_apis.death_message')

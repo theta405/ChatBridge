@@ -35,6 +35,11 @@ def kaiheila_bot():
 	entry.main()
 
 
+def mattermost_bot():
+	from chatbridge.impl.mattermost import entry
+	entry.main()
+
+
 def main():
 	if len(sys.argv) == 2:
 		arg = sys.argv[1]
@@ -50,5 +55,6 @@ def main():
 		print('{} discord_bot: Start a Discord bot as client'.format(prefix))
 		print('{} cqhttp_bot: Start a CQ-Http bot as client'.format(prefix))
 		print('{} kaiheila_bot: Start a Kaiheila bot as client'.format(prefix))
-		print('{} online_command: Start a CQ-Http bot as client'.format(prefix))
+		print('{} online_command: Start a Online Command bot as client'.format(prefix))
+		print('{} mattermost_bot: Start a Mattermost bot as client'.format(prefix))
 
