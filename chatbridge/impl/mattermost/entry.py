@@ -30,23 +30,30 @@ class MattermostBot():
 	def __init__(self, config: MattermostConfig):
 		self.config = config
 		self.logger = ChatBridgeLogger('Bot', file_handler = chatClient.logger.file_handler)
-		self.logger.info(f'正在连接 {self.config.mattermost_address}')
-		self.api = mattermost.MMApi(f'http{"s" * self.config.mattermost_ssl}://{self.config.mattermost_address}:{self.config.mattermost_port}/api')
+		self.http_address = f'http{"s" * self.config.mattermost_ssl}://{self.config.mattermost_address}:{self.config.mattermost_port}'
+		self.logger.info(f'正在连接 Mattermost ({self.http_address})')
+		self.api = mattermost.MMApi(f'{self.http_address}/api')
 		self.api.login(bearer = config.mattermost_token)
 
 	def start(self):
 		mws.MMws(self.event_handler, self.api, f'ws{"s" * self.config.mattermost_ssl}://{self.config.mattermost_address}:{self.config.mattermost_port}/api/v4/websocket')
 		if self.config.connection_prompt:
 			self._send_text('已连接 **ChatBridge**')
-		self.logger.info(f'已连接 {self.config.mattermost_address}')
+		self.logger.info(f'已连接 Mattermost')
 		try:
 			while True:
 				sleep(3)
 		except KeyboardInterrupt:
-			if self.config.connection_prompt:
-				self._send_text('已断开 **ChatBridge**')
-			self.logger.info('即将退出')
-			exit(0)
+			self.close()
+		except BaseException as e:
+			self.logger.info(f'出现错误：{str(e)}')
+			self.close(f'**ChatBridge**  客户端出现错误：{str(e)}')
+	
+	def close(self, message: str = '已断开 **ChatBridge**'):
+		if self.config.connection_prompt:
+			self._send_text(message)
+		self.logger.info('即将退出')
+		exit(0)
 
 	def event_handler(self, mmws, event_data):
 		try:
