@@ -36,13 +36,15 @@ class MattermostBot():
 
 	def start(self):
 		mws.MMws(self.event_handler, self.api, f'ws{"s" * self.config.mattermost_ssl}://{self.config.mattermost_address}:{self.config.mattermost_port}/api/v4/websocket')
-		self._send_text('已连接 **ChatBridge**')
+		if self.config.connection_prompt:
+			self._send_text('已连接 **ChatBridge**')
 		self.logger.info(f'已连接 {self.config.mattermost_address}')
 		try:
 			while True:
 				sleep(3)
 		except KeyboardInterrupt:
-			self._send_text('已断开 **ChatBridge**')
+			if self.config.connection_prompt:
+				self._send_text('已断开 **ChatBridge**')
 			self.logger.info('即将退出')
 			exit(0)
 
