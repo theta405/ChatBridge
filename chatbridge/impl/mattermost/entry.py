@@ -90,7 +90,7 @@ class MattermostBot():
 				length = 0
 
 	def send_message(self, sender: str, message: str):
-		self._send_text(f'[{sender}] {message}')
+		self._send_text(f'**[{sender}]** {message}')
 
 
 class MattermostChatBridgeClient(ChatBridgeClient):
