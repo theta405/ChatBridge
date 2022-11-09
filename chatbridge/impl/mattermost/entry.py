@@ -39,16 +39,8 @@ class MattermostBot():
 		if self.config.connection_prompt:
 			self._send_text('已连接 **ChatBridge**')
 		self.logger.info(f'已连接 Mattermost')
-		try:
-			while True:
-				sleep(3)
-		except KeyboardInterrupt:
-			self.close()
-		except BaseException as e:
-			self.logger.info(f'出现错误：{str(e)}')
-			self.close(f'**ChatBridge**  客户端出现错误：{str(e)}')
 	
-	def close(self, message: str = '已断开 **ChatBridge**'):
+	def stop(self, message: str = '已断开 **ChatBridge**'):
 		if self.config.connection_prompt:
 			self._send_text(message)
 		self.logger.info('即将退出')
@@ -65,8 +57,13 @@ class MattermostBot():
 					chatClient.send_chat(event.msg, event.sender_name[1:])
 		except:
 			self._send_text('处理消息时出现问题')
-			
 
+	def console_loop(self):
+		while True:
+			text = input()
+			if text == 'stop':
+				self.stop()
+			
 	def _send_text(self, text):
 		msg = ''
 		length = 0
@@ -104,12 +101,20 @@ class MattermostChatBridgeClient(ChatBridgeClient):
 
 def main():
 	global chatClient, mm_bot
-	config: ClientConfig = utils.load_config(ConfigFile, MattermostConfig)
-	chatClient = MattermostChatBridgeClient.create(config)
-	utils.start_guardian(chatClient)
-	print('正在启动 Mattermost Bot')
-	mm_bot = MattermostBot(config)
-	mm_bot.start()
+	try:
+		config: ClientConfig = utils.load_config(ConfigFile, MattermostConfig)
+		chatClient = MattermostChatBridgeClient.create(config)
+		mm_bot = MattermostBot(config)
+		utils.start_guardian(chatClient)
+		print('正在启动 Mattermost Bot')
+		mm_bot.start()
+		mm_bot.console_loop()
+	except SystemExit:
+		pass
+	except KeyboardInterrupt:
+		mm_bot.stop()
+	except BaseException as e:
+		print(f'出现错误：{str(e)}')
 
 
 if __name__ == '__main__':
