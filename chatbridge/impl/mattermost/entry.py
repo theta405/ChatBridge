@@ -105,7 +105,7 @@ class MattermostChatBridgeClient(ChatBridgeClient):
 				pass
 			else:
 				payload.message = message
-				mm_bot.send_message(sender, f'{"@here " * prefix == "!!mhere"}{payload.formatted_str()}')
+				mm_bot.send_message(sender, f'{"@here " * (prefix == "!!mhere")}{payload.formatted_str()}')
 		except:
 			self.logger.exception('处理消息时出现错误')
 	
