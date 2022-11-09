@@ -72,7 +72,7 @@ class MattermostBot():
 						else:
 							self._send_text(f'{client} 离线')
 					else:
-						chatClient.send_chat(event.msg, event.sender_name)
+						chatClient.send_chat(event.msg, event.sender_name[1:])
 		except:
 			self._send_text('处理消息时出现问题')
 			
