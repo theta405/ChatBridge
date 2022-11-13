@@ -1,13 +1,12 @@
 import mattermost
 import mattermost.ws as mws
 import json
-from time import sleep
 from typing import Optional
 
 from chatbridge.common.logger import ChatBridgeLogger
 from chatbridge.core.client import ChatBridgeClient
 from chatbridge.core.config import ClientConfig
-from chatbridge.core.network.protocol import ChatPayload, CommandPayload
+from chatbridge.core.network.protocol import ChatPayload
 from chatbridge.impl import utils
 from chatbridge.impl.mattermost.config import MattermostConfig
 
@@ -53,8 +52,13 @@ class MattermostBot():
 			if event_data['event'] == 'posted':
 				event = MattermostMessage(event_data)
 				if (event.channel_id == self.config.channel_id) and (len(event.msg) != 0) and (event.sender_name != self.config.bot_name):
-					self.logger.info(f'[Mattermost]: {event.msg}')
-					chatClient.send_chat(event.msg, event.sender_name[1:])
+					self.logger.info(f'[Mattermost]: {event.sender_name}: {event.msg}')
+					args = event.msg.split(' ')
+
+					if len(args) == 1 and args[0] == '!!ping':
+						self._send_text('pong!!')
+					else:
+						chatClient.send_chat(event.msg, event.sender_name[1:])
 		except:
 			self._send_text('处理消息时出现问题')
 
